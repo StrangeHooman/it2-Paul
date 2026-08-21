@@ -1,7 +1,10 @@
 from pathlib import Path
 import json
+import sys
 
-jsonfileDir = Path.cwd + "/../studentData.json"
+jsonfileDir = str(Path(__file__).resolve()) + "students.json"
+
+print(jsonfileDir)
 
 data = {}
 
@@ -18,8 +21,32 @@ def startup():
         data = {}
 
         with open(jsonfileDir, "w") as file:
-            json.dump(data)
+            json.dump(data, file, indent=4)
+
+def addStudent():
+    None
+
+def attendance():
+    None
+
+def exit():
+    sys.exit()
+
+def defaultFunc():
+    print("Unknown command")
+
+switcher = {
+    "add student" : addStudent,
+    "attendance" : attendance,
+    "exit" : exit
+}
 
 def main():
-    while command != "exit":
+    while True:
         command = input("Main> ")
+        func = switcher.get(command, defaultFunc)
+
+        func()
+
+startup()
+main()
