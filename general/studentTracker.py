@@ -12,6 +12,9 @@ studentInfo = {"Name": None, "Grade": None, "Attendance" : None}
 
 students = {}
 
+mainPath = "Main"
+subPath = ""
+
 def startup():
     try:
         with open(jsonfileDir, "r") as file:
@@ -24,10 +27,10 @@ def startup():
             json.dump(data, file, indent=4)
 
 def addStudent():
-    None
+    subPath = "/addStudent"
 
 def attendance():
-    None
+    subPath = "/attendance"
 
 def exit():
     sys.exit()
@@ -35,15 +38,32 @@ def exit():
 def defaultFunc():
     print("Unknown command")
 
+def help():
+    subPath = "/help"
+
+    print("")
+
+    for key in switcher.keys():
+        print(f"{key:>20}")
+
+    print("")
+    
+
 switcher = {
     "add student" : addStudent,
     "attendance" : attendance,
+    "help" : help,
     "exit" : exit
 }
 
+def draw_input():
+    return input(mainPath + subPath + "> ")
+
+
 def main():
+    subPath = ""    
     while True:
-        command = input("Main> ")
+        command = draw_input()
         func = switcher.get(command, defaultFunc)
 
         func()
