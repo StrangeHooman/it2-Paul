@@ -8,29 +8,46 @@ print(jsonfileDir)
 
 data = {}
 
+students = []
+
 studentInfo = {"Name": None, "Grade": None, "Attendance" : None}
 
 students = {}
 
-mainPath = "Main"
-subPath = ""
+mainPath = ["Main"]
+subPath = [""]
+
+def draw_input(msg = ""):
+    return input(mainPath[0] + subPath[0] + "> " + msg)
+
+def readJSON():
+    with open(jsonfileDir, "r") as file:
+        data = json.load(file)
+
+def writeJSON(data):
+    with open(jsonfileDir, "w") as file:
+        json.dump(data, file, indent=4)
 
 def startup():
     try:
-        with open(jsonfileDir, "r") as file:
-            data = json.load(file)
+        readJSON()
 
     except FileNotFoundError:
         data = {}
 
-        with open(jsonfileDir, "w") as file:
-            json.dump(data, file, indent=4)
+        writeJSON
 
 def addStudent():
-    subPath = "/addStudent"
+    subPath[0] = "/addStudent"
+
+    name = draw_input("Student name: ")
+
+    data = {""}
+
+
 
 def attendance():
-    subPath = "/attendance"
+    subPath[0] = "/attendance"
 
 def exit():
     sys.exit()
@@ -39,7 +56,7 @@ def defaultFunc():
     print("Unknown command")
 
 def help():
-    subPath = "/help"
+    subPath[0] = "/help"
 
     print("")
 
@@ -56,12 +73,8 @@ switcher = {
     "exit" : exit
 }
 
-def draw_input():
-    return input(mainPath + subPath + "> ")
-
-
 def main():
-    subPath = ""    
+    subPath[0] = ""    
     while True:
         command = draw_input()
         func = switcher.get(command, defaultFunc)
