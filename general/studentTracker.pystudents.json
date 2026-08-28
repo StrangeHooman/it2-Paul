@@ -1,1 +1,7 @@
-{}
+{
+    "Paul": {
+        "name": "Paul",
+        "grade": null,
+        "attendance": 0
+    }
+}

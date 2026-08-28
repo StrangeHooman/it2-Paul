@@ -8,9 +8,9 @@ print(jsonfileDir)
 
 data = {}
 
-students = []
+students = {}
 
-studentInfo = {"Name": None, "Grade": None, "Attendance" : None}
+studentInfo = {"name": None, "grade": None, "attendance" : None}
 
 students = {}
 
@@ -22,7 +22,7 @@ def draw_input(msg = ""):
 
 def readJSON():
     with open(jsonfileDir, "r") as file:
-        data = json.load(file)
+        return json.load(file)
 
 def writeJSON(data):
     with open(jsonfileDir, "w") as file:
@@ -30,21 +30,30 @@ def writeJSON(data):
 
 def startup():
     try:
-        readJSON()
+        data = readJSON()
 
     except FileNotFoundError:
         data = {}
 
         writeJSON
 
+
+def list_students():
+    data = readJSON()
+
+    for key, value in data.items():
+        print(key)
+
 def addStudent():
     subPath[0] = "/addStudent"
 
     name = draw_input("Student name: ")
 
-    data = {""}
+    data = readJSON()
 
+    data[name] = {"name" : name, "grade" : None, "attendance" : 0}
 
+    writeJSON(data)
 
 def attendance():
     subPath[0] = "/attendance"
@@ -67,6 +76,7 @@ def help():
     
 
 switcher = {
+    "students" : list_students,
     "add student" : addStudent,
     "attendance" : attendance,
     "help" : help,
@@ -74,8 +84,11 @@ switcher = {
 }
 
 def main():
-    subPath[0] = ""    
+    subPath[0] = "" 
+
     while True:
+        subPath[0] = "" 
+
         command = draw_input()
         func = switcher.get(command, defaultFunc)
 
