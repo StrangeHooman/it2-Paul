@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 
 script_dir = Path(__file__).resolve().parent
 
-load_dotenv(dotenv_path=script_dir/"apis.env")
+load_dotenv(dotenv_path=script_dir/".env")
 
 steam_api = os.environ.get("STEAM_API")
 steam_ID_64 = os.environ.get("STEAM_ID_64")
