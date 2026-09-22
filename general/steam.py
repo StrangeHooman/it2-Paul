@@ -32,8 +32,6 @@ try:
 
     data = response.json()
 
-    print(data)
-
 except requests.exceptions.RequestException as e:
     print("Error: ", e)
 
@@ -41,7 +39,24 @@ except requests.exceptions.RequestException as e:
 games = data["response"]["games"]
 total_playtime = 0
 
+ordered_playtime: list = []
+
 for i in range(len(games)):
+    self_info = (games[i]["name"], games[i]["playtime_forever"]/60)
+    if len(ordered_playtime) == 0:
+        ordered_playtime.append(self_info)
+
+    else:
+        for j in range(len(ordered_playtime)):
+            if self_info[1] > ordered_playtime[j][1]:
+                ordered_playtime.insert(j, self_info)
+                break
+
+            elif j == len(ordered_playtime)-1:
+                ordered_playtime.append(self_info)
+
     total_playtime += games[i]["playtime_forever"]
 
-print("Total wasted time:", total_playtime)
+print("Total wasted time:", total_playtime/60)
+
+[print(ordered_playtime[i],"") for i in range(len(ordered_playtime))]
