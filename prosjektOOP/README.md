@@ -1,4 +1,7 @@
 1. Idé
 
-stock market
+Aksjespill som renderer grafer i terminalen.
 
+Game-ifiserte elementer
+
+Gameloop som er seperat fra input
