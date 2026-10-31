@@ -1,6 +1,17 @@
-import sys
 from blessed import Terminal
+from ui import *
+import time
 
+BOX_OUTER = {
+    'tl': '▛',  # \u259B Upper Left Quadrant Block
+    'tr': '▜',  # \u259C Upper Right Quadrant Block
+    'bl': '▙',  # \u2599 Lower Left Quadrant Block
+    'br': '▟',  # \u259F Lower Right Quadrant Block
+    't': '▔',   # \u2594 Upper One Eighth Block
+    'b': '▁',
+    'l': '▎',   # \u258F Left One Eighth Block
+    'r': '🮇'  # \u2595 Right One Eighth Block (Added since sides have directional bias)
+}
 
 BOX_LIGHT = {
     'tl': '┌', 'tr': '┐', 'bl': '└', 'br': '┘', 
@@ -41,86 +52,61 @@ SHADES = {
     "dark": "▓",    # 75% opacity
 }
 
-class Vector2:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
-
-    def __add__(self, other: Vector2):
-        return Vector2(self.x + other.x, self.y + other.y)
-
-    def __sub__(self, other: Vector2):
-        return Vector2(self.x - other.x, self.y - other.y)
-
-    def __mul__(self, other: Vector2):
-        return Vector2(self.x * other.x, self.y * other.y)
-
-    def __truediv__(self, other: Vector2):
-        return Vector2(self.x / other.x, self.y / other.y)
-
-
-class ui:
-    displayList: list
-    pos = Vector2(0, 0)
-    size = Vector2(0, 0)
-    colorFront = (212, 212, 212)
-    colorBack = (30, 30, 30)
-
-    def __init__(self, pos: Vector2, size: Vector2, displayList: list):
-        self.pos = pos
-        self.size = size
-        self.displayList = displayList
-
-    def render(self, terminal: Terminal):
-
-        style = terminal.color_rgb(*self.colorFront) + terminal.on_color_rgb(*self.colorBack)
-        for row, line in enumerate(self.displayList):
-            print(terminal.move_xy(self.pos.x, self.pos.y + row) + style + line + terminal.normal, end="", flush=True)
 
 
 
 
-class button(ui):
-    def __init__(self, pos: Vector2, text: str):
-        lines = text.splitlines()
-        maxLen = 0
-        for line in lines:
-            if len(line) > maxLen:
-                maxLen = len(line)
+
+def clearBuffer(term: Terminal):
+    buffer = []
+    for i in range(term.height):
+        buffer.append(" "*term.width)
+
+    return buffer
+
+def renderScreen(term: Terminal, buffer):
+    for i, str in enumerate(buffer):
+        print(term.move_xy(0, 1*i) + str, end="", flush=True)
 
 
 
-        self.text = text
-
-        display = [BOX_LIGHT["tl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["tr"]]
-        for line in lines:
-            display.append(BOX_LIGHT["v"] + " "*((maxLen-len(line))//2) + line + " "*-(-(maxLen-len(line))//2) + BOX_LIGHT["v"])
-
-        display.append(BOX_LIGHT["bl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["br"])
-
-        super().__init__(pos, Vector2(2+maxLen, 2+len(lines)), display)
-
-
-
-
-for i in range(6):
-    print("\n")
 
 
 term = Terminal()
 
+defaultColorFront = (212, 212, 212)
+defualtColorBack = (30, 30, 30)
+
+
+print(term.color_rgb(*defaultColorFront) + term.on_color_rgb(*defualtColorBack))
+
+
+screenBuffer = []
+
+for i in range (term.height):
+    screenBuffer.append(" "*term.width)
+
+renderScreen(term, screenBuffer)
+
+
+
+startPos = Vector2(*term.get_location())
+
 clickable = []
 
-drawArea = Vector2(0, term.height - 10)
+drawArea = Vector2(0, 0)
 
 print(term.move_xy(drawArea.x, drawArea.y) + term.width*BOX_LIGHT["h"])
 
-button1 = button(Vector2(5, 2) + drawArea, "Hello\nWorld!")
+button1 = button(Vector2(0, 1) + drawArea, "Hello\nWorld!")
+button2 = button(Vector2(0, 6) + drawArea, "A clickable\nbutton")
+text1 = text(Vector2(0, 10), "Hello!")
 
 clickable.append(button1)
 
 
-button1.render(term)
+screenBuffer = button1.render(term, screenBuffer)
+ScreenBuffer = text1.render(term, screenBuffer)
 
 if not term.does_mouse(report_motion=True):
     print("This terminal doesn't support mouse-motion reporting.")
@@ -129,23 +115,29 @@ else:
         while True:
             event = term.inkey(timeout=1/60)
 
+            screenBuffer = clearBuffer(term)
+
             if event.lower() == "q":
                 break
 
             if event.name and event.name.startswith("MOUSE_"):
                 x, y = event.mouse_xy
-                button1.pos = Vector2(x, y)
-                button1.render(term)
-                
-                for i in range(10):
-                    print(term.move_xy(0, drawArea.y + i) + "")
-
-                print(term.move_xy(0, drawArea.y + 8) + term.clear_eol
-                      + f"{event.name} at x={x}, y={y}", end="", flush=True)
 
 
-with term.cbreak(), term.hidden_cursor():
-    inp = term.inkey()
+
+                #print(term.move_xy(0, drawArea.y + 15) + term.clear_eol + f"{event.name} at x={x}, y={y}", end="", flush=True)
+                text1 = text(text1.pos, text1.displayList[0])
+
+                button1.pos = Vector2(x, y) + drawArea
+            button2.pos = Vector2(0, 6) + drawArea
+            screenBuffer = text1.render(term, screenBuffer)
+            screenBuffer = button1.render(term, screenBuffer)
+            screenBuffer = button2.render(term, screenBuffer)
+            renderScreen(term, screenBuffer)
 
 
-print(term.move_xy(0, drawArea.y+8) + "Hello\n")
+print(term.move_xy(0, drawArea.y+8) + "Hello")
+for i in range(term.height):
+    print(term.move_xy(0, drawArea.y + i + 1) + " "*term.width, end="", flush=True)
+
+print(term.move_xy(startPos.x, startPos.y))
