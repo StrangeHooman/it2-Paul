@@ -57,8 +57,13 @@ def renderScreen(term: Terminal, buffer):
                 lastColor = currentColor
 
             if lastStyles != currentStyles:
-                for style in currentStyles: outString += "\x1b[0m" + style
-                outString += currentColor
+
+                if currentStyles == ["\x1b[0m"]:
+                    outString += currentColor
+
+                else:
+                    outString += "\x1b[0m" + currentColor
+                    for style in currentStyles: outString += style
                 lastStyles = currentStyles
 
 
@@ -105,7 +110,7 @@ tradingScreen = {
     "newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
 }
 
-# text1 = Text(Vector2(20, 60), textToCell("Something happening\n\033[1mThis \033[0mis very interresting"))
+text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
 
 lastMouse = Vector2(0, 0)
 
@@ -155,6 +160,8 @@ else:
 
             for item in tradingScreen.values():
                 screenBuffer = item.render(term, screenBuffer)
+
+            screenBuffer = text1.render(term, screenBuffer)
 
             renderScreen(term, screenBuffer)
 

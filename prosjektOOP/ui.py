@@ -327,10 +327,10 @@ class Button(UI):
 class Text(UI):
     def __init__(self, pos: Vector2, text: list):
         maxLen = len(text[0])
-        super().__init__(pos, Vector2(maxLen, len(text)), text)
+        super().__init__(pos, Vector2(maxLen, len(text)), text, Vector([100, 100, 100]), Vector([100, 100, 100]))
 
     def setText(self, text: list):
-        super().size = Vector2(len(text[0]), len(text), Vector([0, 0 ,0]), Vector([0, 0 ,0]))
+        super().size = Vector2(len(text[0]), len(text))
         super().displayList = text
 
 defaultColorFront = Vector([212, 212, 212])
