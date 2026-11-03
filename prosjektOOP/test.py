@@ -112,6 +112,11 @@ tradingScreen = {
 
 text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
 
+
+text4 = Text(Vector2(94, 5), textToCell((BLOCK_STEPS_R[1] + BLOCK_STEPS_L[1] + "\n")*2 + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6] + ("\n" + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6])*2, fg = Vector([20, 255, 40])))
+extra = Text(Vector2(96, 0), textToCell(("|" + "\n")*19 + "|", fg=Vector([100, 100, 100])))
+text5 = Text(Vector2(97, 6), textToCell((BLOCK_STEPS_R[1] + BLOCK_STEPS_L[1] + "\n")*2 + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6] + ("\n" + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6])*2, fg = Vector([255, 20, 20])))
+
 lastMouse = Vector2(0, 0)
 
 for item in tradingScreen.values():
@@ -162,6 +167,10 @@ else:
                 screenBuffer = item.render(term, screenBuffer)
 
             screenBuffer = text1.render(term, screenBuffer)
+
+            screenBuffer = text4.render(term, screenBuffer)
+            screenBuffer = extra.render(term, screenBuffer)
+            screenBuffer = text5.render(term, screenBuffer)
 
             renderScreen(term, screenBuffer)
 

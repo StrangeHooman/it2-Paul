@@ -34,7 +34,8 @@ BLOCKS = {
 
 # 🏁 Smooth horizontal loading bar elements (1/8th increments)
 # Excellent for fractional progress steps without jumping full grid cells
-BLOCK_STEPS = {
+
+BLOCK_STEPS_L = {
     1: "▏",
     2: "▎",
     3: "▍",
@@ -43,6 +44,17 @@ BLOCK_STEPS = {
     6: "▊",
     7: "▉",
     8: "█"
+}
+
+BLOCK_STEPS_R = {
+    1: "\u2595",      # ▕ Right 1/8 block (Standard Block Elements)
+    2: "\U0001FB87",  # 🮇 Right 1/4 block (Symbols for Legacy Computing)
+    3: "\U0001FB88",  # 🮈 Right 3/8 block (Symbols for Legacy Computing)
+    4: "\u2590",      # ▐ Right 1/2 block (Standard Block Elements)
+    5: "\U0001FB89",  # 🮉 Right 5/8 block (Symbols for Legacy Computing)
+    6: "\U0001FB8A",  # 🮊 Right 3/4 block (Symbols for Legacy Computing)
+    7: "\U0001FB8B",  # 🮋 Right 7/8 block (Symbols for Legacy Computing)
+    8: "\u2588",      # █ Full block (Standard Block Elements)
 }
 
 # ░ Texture shades for background depths and drop-shadows

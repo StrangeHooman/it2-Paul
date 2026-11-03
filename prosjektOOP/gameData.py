@@ -1,14 +1,20 @@
+import random
+
+
 class Company:
     name: str
-    function = None
-    functionParams: tuple
-    stock = 0
-    def __init__(self, name, function):
+    biasFunciton = None
+    biasFunctionParams: tuple
+    dailyFunction = None
+    dailyFunctionParams: tuple
+    shares = 0
+    def __init__(self, name, bias, daily):
         self.name = name
-        self.function = function
+        self.biasFunction = bias
+        self.dailyFunction = daily
 
-    def getVal(self):
-        self.function(*self.functionParams) * self.stock
+    def getCash(self):
+        return self.dailyFunction(self.biasFunciton, *self.functionParams) * self.shares
     
 
 class TextBlocks:
@@ -26,11 +32,12 @@ class Newspaper(TextBlocks):
         self.baseEffect = baseEffect
 
 
-def basicStock(seed, )
+def dailyBasicStock(seed, randomIntensity):
+    return seed + random.randint() randomIntensity
 
 companies = {
     Company("Biltema", basicStock),
-    Company("Jasper CO")
+    Company("Jasper CO", )
 }
 
 
