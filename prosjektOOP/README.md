@@ -50,13 +50,25 @@ Jeg bruker en buffer for å unngå flimring av skjermen
 Blessed er et bibliotek som åpner opp for enkel kontroll av printing til terminalen.
 Jeg bruker det for å enkelt kunne endre farge på celler, og bevege på cursoren.
 
+## Re:
+Re er et bilbiotek som gir deg verktøy for å finne deler av tekst som følger et visst format i en string. Jeg bruker dette i `textToCell()` funksjonen for å "dra ut" ANSI escape codes og legge de til i `Cell` objekter som lister av strings heller enn som et char element av en `Cell`.
+
+## Time:
+Time er et innebygd bilbiotek i python som har diverse verktøy for å behandle nettop tid.
+Jeg bruker biblioteket for å regne ut totaltid av programmet og tid mellom frames.
+
+## Math:
+Math er et annet innebygd bilbiotek i python som gir mange matteverktøy.
+Jeg bruker dette biblioteket hovvedsakelig for funksjonene 
+`math.floor` og `math.ceil`.
+
 <br>
 
 <br>
 
 # 4. Kjøring
 
-For å kjøre koden starter du launch.py i valgfri omgivelse. Den skal i teorien, og praksis på min egen maskin, åpne et nytt terminalvindu hvor hovvedkoden kjører. Den er foreløpig kun konfigurert for Windows og Macos.
+For å kjøre koden starter du launch.py i valgfri omgivelse. Den skal i teorien, og praksis på min egen maskin, åpne et nytt terminalvindu hvor hovvedkoden kjører. Den er foreløpig kun konfigurert for Windows og Macos. Jeg har selv kun testet koden på Windows.
 
 <br>
 
