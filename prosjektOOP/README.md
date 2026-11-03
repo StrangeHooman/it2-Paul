@@ -64,7 +64,7 @@ For å kjøre koden starter du launch.py i valgfri omgivelse. Den skal i teorien
 
 # 5. KI-bruk
 
-Jeg har tatt i bruk ki for veiledning og forståelse av hvordan terminalen oppfører seg. 
+Jeg har tatt i bruk ki for veiledning og forståelse av hvordan terminalen oppfører seg samt hjelp ved debugging og restrukturering. 
 
 Ki er også brukt for å finne en god måte å lage en ny terminal på, som koden skal kjøre i. Ki har mer eller mindre skrevet launch.py, men jeg mener jeg forstår den og er åpen for spørsmål anngående den også. Jeg tenkte det var akseptabelt å la den skrive mer av koden her ettersom den ikke er hovvedpoenget av mine koder.
 

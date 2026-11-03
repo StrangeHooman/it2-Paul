@@ -1,5 +1,6 @@
 from blessed import Terminal
 import math
+import re
 
 BOX_OUTER = {
     'tl': '▛',  # \u259B Upper Left Quadrant Block
@@ -184,12 +185,66 @@ class Vector():
         return Vector(finalVec)
 
 class Cell:
-    def __init__(self, char, foreGround, backGround, styles):
+    def __init__(self, char, foreGround: Vector, backGround: Vector, styles = []):
         self.fg = foreGround
         self.bg = backGround
         self.char = char
         self.styles = styles
+
+def textToCell(string: str, horizontalLayout = 0, *, fg = Vector([212, 212, 212]), bg = Vector([30, 30, 30])):
+    emptyCell = Cell(" ", fg, bg, [])
     
+    sgr = re.compile(r"\x1b\[([0-9:;]*)m")
+
+    maxLen = 0
+
+    localBuffer = []
+
+    textList = string.splitlines()
+
+    for line in textList:
+        localBuffer.append(list(line))
+        maxLen = len(re.sub(sgr, "", line)) if maxLen < len(re.sub(sgr, "", line)) else maxLen
+        
+    styles = []
+    finalBuffer = []
+
+    for i, line in enumerate(string.splitlines()):
+        tempList = []
+        lastPos = 0
+
+
+        leftBuffer = [emptyCell for i in range(math.floor((maxLen - len(re.sub(sgr, "", line)))/2 *horizontalLayout))]
+        rightBuffer = [emptyCell for i in range(math.ceil((maxLen - len(re.sub(sgr, "", line)))/2 *(2-horizontalLayout)))]
+
+        for match in sgr.finditer(line):
+            text = line[lastPos:match.start()]
+
+            for char in text:
+                tempList.append(Cell(char, fg, bg, styles.copy() if len(styles) > 0 else ["\x1b[0m"]))
+
+            lastPos = match.end()
+
+
+            if match.group(0) == "\x1b[0m":
+                styles = []
+
+            else:
+                styles.append(match.group(0))
+
+
+
+        text = line[lastPos:]
+
+        for char in text:
+            tempList.append(Cell(char, fg, bg, styles if len(styles) > 0 else ["\x1b[0m"]))
+
+
+        finalBuffer.append(leftBuffer + tempList + rightBuffer)
+
+    return finalBuffer
+
+
 class UI:
     displayList: list
     pos = Vector2(0, 0)
@@ -207,59 +262,45 @@ class UI:
         self.colorFront = colorFront
         self.colorBack = colorBack
 
-    def render(self, terminal: Terminal, buffer):
+    def render(self, terminal: Terminal, buffer):    
 
-        localBuffer = []
-        for i in range(len(buffer)):
-            localBuffer.append(list(buffer[i]))
-
-        localDisplayList = []
-        for i in range(len(self.displayList)):
-            localDisplayList.append(list(self.displayList[i]))
-    
-
-        foreGround = tuple((self.colorFront + self.colorFrontOffset).values)
-        backGround = tuple((self.colorBack + self.colorBackOffset).values)
-
-
-        for row, string in enumerate(localDisplayList):
-            for i, char in enumerate(string):
+        for row, string in enumerate(self.displayList):
+            for i, cell in enumerate(string):
                 try:
-                    localBuffer[row+self.pos.y][i+self.pos.x] = Cell(char, foreGround, backGround)
+                    foreGround = (cell.fg + self.colorFrontOffset)
+                    backGround = (cell.bg + self.colorBackOffset)
+
+                    buffer[row+self.pos.y][i+self.pos.x] = Cell(cell.char, foreGround, backGround, cell.styles)
 
                 except IndexError:
                     pass
 
 
         
-        return localBuffer
+        return buffer
 
 class Button(UI):
-    def __init__(self, pos: Vector2, text: str, size = Vector2(0, 0), *, clickable = False, colorFront = Vector([212, 212, 212]), colorBack = Vector([30, 30, 30])):
+    def __init__(self, pos: Vector2, text: list, size = Vector2(0, 0), *, clickable = False, colorFront = Vector([212, 212, 212]), colorBack = Vector([30, 30, 30])):
         
 
-        lines = text.splitlines()
-        maxLen = 0
-        for line in lines:
-            if len(line) > maxLen:
-                maxLen = len(line)
-
-        maxLen = max(maxLen, size.x - 2)
+        maxLen = max(len(text[0]), size.x - 2)
 
         self.text = text
 
-        display = [BOX_LIGHT["tl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["tr"]]
+        display = [textToCell(BOX_LIGHT["tl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["tr"], fg = (colorFront), bg = (colorBack))[0]]
 
-        for i in range(math.floor(((size.y - 2) - len(lines))/2)):
-            display.append(BOX_LIGHT["v"] + " " * maxLen + BOX_LIGHT["v"])
+        for i, row in enumerate(text):
 
-        for line in lines:
-            display.append(BOX_LIGHT["v"] + " "*((maxLen-len(line))//2) + line + " "*-(-(maxLen-len(line))//2) + BOX_LIGHT["v"])
+            tempList = textToCell(BOX_LIGHT["v"], fg = colorFront, bg = colorBack)[0]
 
-        for i in range(math.ceil(((size.y - 2) - len(lines))/2)):
-            display.append(BOX_LIGHT["v"] + " " * maxLen + BOX_LIGHT["v"])
+            for j, cell in enumerate(row):
+                tempList.append(cell)
 
-        display.append(BOX_LIGHT["bl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["br"])
+            tempList.append(textToCell(BOX_LIGHT["v"], fg = colorFront, bg = colorBack)[0][0])
+
+            display.append(tempList)
+
+        display.append(textToCell(BOX_LIGHT["bl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["br"], fg = (colorFront), bg = (colorBack))[0])
 
         self.clickable = clickable
 
@@ -284,9 +325,14 @@ class Button(UI):
 
 
 class Text(UI):
-    def __init__(self, pos: Vector2, text: str):
-        super().__init__(pos, Vector2(len(text), 1), [text])
+    def __init__(self, pos: Vector2, text: list):
+        maxLen = len(text[0])
+        super().__init__(pos, Vector2(maxLen, len(text)), text)
 
-    def setText(self, text: str):
-        super().size = Vector2(len(text), 1)
-        super().displayList = [text]
+    def setText(self, text: list):
+        super().size = Vector2(len(text[0]), len(text), Vector([0, 0 ,0]), Vector([0, 0 ,0]))
+        super().displayList = text
+
+defaultColorFront = Vector([212, 212, 212])
+defualtColorBack = Vector([30, 30, 30])
+defaultCell = Cell(" ", defaultColorFront, defualtColorBack, [])

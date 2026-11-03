@@ -44,68 +44,33 @@ def clearBuffer(term: Terminal):
 def renderScreen(term: Terminal, buffer):
 
     lastColor = None
+    lastStyles = None
     outString = ""
 
     for row, string in enumerate(buffer):
         for col, cell in enumerate(string):
-            currentColor = term.color_rgb(*cell.fg) + term.on_color_rgb(*cell.bg)
+            currentColor = term.color_rgb(*cell.fg.values) + term.on_color_rgb(*cell.bg.values)
+            currentStyles = cell.styles
             
             if lastColor != currentColor:
                 outString += currentColor
                 lastColor = currentColor
 
+            if lastStyles != currentStyles:
+                for style in currentStyles: outString += "\x1b[0m" + style
+                outString += currentColor
+                lastStyles = currentStyles
+
+
             outString += cell.char
 
     print(term.move_xy(0, 0) + outString, end="", flush=True)
 
-def textToCell(string: str, horizontalLayout = 0, *, fg = (212, 212, 212), bg = (30, 30, 30)):
-    
-    
-    sgr = re.compile(r"\x1b\[([0-9:;]*)]m")
 
-    maxLen = 0
-
-    localBuffer = []
-
-    for line in string.splitlines():
-        localBuffer.append(list(line))
-        maxLen = len(re.sub(sgr, "", line)) if maxLen < len(re.sub(sgr, "", line)) else maxLen
-        
-    escapeCodes = []
-    finalBuffer = []
-
-    for i, line in enumerate(localBuffer):
-
-
-        
-        bufferLeft = []
-        bufferRight = []
-        finalBuffer.append([])
-
-        tempList = []
-
-        for j, char in enumerate(line):
-            for match in sgr.finditer(string):
-                if match.group(0) == "\x1b\[0m":
-                    escapeCodes = []
-
-                else:
-                    escapeCodes.append(match)
-
-            if len(re.sub(sgr, "", char)) == 0:
-                tempList.append(Cell(char, fg, bg, escapeCodes if len(escapeCodes) > 0 else ["\x1b\[0m"]))
-
-        finalBuffer.append(tempList)
-
-    return finalBuffer
 
 term = Terminal()
 
-defaultColorFront = (212, 212, 212)
-defualtColorBack = (30, 30, 30)
-defaultCell = Cell(" ", defaultColorFront, defualtColorBack)
-
-print(term.color_rgb(*defaultColorFront) + term.on_color_rgb(*defualtColorBack))
+print(term.color_rgb(*defaultColorFront.values) + term.on_color_rgb(*defualtColorBack.values))
 
 
 screenBuffer = []
@@ -134,12 +99,13 @@ firmsArea = Vector2(int(math.floor(term.width * 0.2)), int(math.floor(term.heigh
 firms = 3
 
 tradingScreen = {
-    "button1" : Button(Vector2(0, 0) + drawArea, "Hello\nWorld!", Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable=True),
-    "button2" : Button(Vector2(0, firmsArea.y//firms * 1) + drawArea, "A clickable\nbutton", Vector2(firmsArea.x, math.floor(firmsArea.y/firms))),
-    "button3" : Button(Vector2(0, firmsArea.y//firms * 2) + drawArea, "A third\nclickable button", Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable = True),
-    "newspaper" : Button(newspaperPos, "\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", newspaperSize, colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]))
+    "button1" : Button(Vector2(0, 0) + drawArea, textToCell("Hello\nWorld!", fg=defaultColorFront, bg=defualtColorBack), clickable=True), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable=True),
+    "button2" : Button(Vector2(0, firmsArea.y//firms * 1) + drawArea, textToCell("A clickable\nbutton")), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms))),
+    "button3" : Button(Vector2(0, firmsArea.y//firms * 2) + drawArea, textToCell("A third\nclickable button"), clickable=True), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable = True),
+    "newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
 }
 
+# text1 = Text(Vector2(20, 60), textToCell("Something happening\n\033[1mThis \033[0mis very interresting"))
 
 lastMouse = Vector2(0, 0)
 
