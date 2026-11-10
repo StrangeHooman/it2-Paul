@@ -28,6 +28,16 @@ Denne definerer en hel del forskjellige klasser knyttet til rendering. Dette ink
 
 <br>
 
+## gameData.py
+I denne koden definerer jeg spillrelaterte klasser og funksjoner. Jeg definerer også de forskjellige firmaene og deres oppførsel.
+
+<br>
+
+## tools.py
+Dette er en liten script med funksjoner jeg bruker i flere koder.
+
+<br>
+
 ## main.py
 Slik som navnet antyder er dette hovvedkoden. Denne blir kjørt i et nytt terminalvindu og tar i bruk klasser fra *ui.py*. 
 

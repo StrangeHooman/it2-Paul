@@ -57,7 +57,7 @@ def renderScreen(term: Terminal, buffer):
             if lastStyles != currentStyles:
 
                 if currentStyles == ["\x1b[0m"]:
-                    outString += currentColor
+                    outString += "\x1b[0m" + currentColor
 
                 else:
                     outString += "\x1b[0m" + currentColor
@@ -105,7 +105,7 @@ tradingScreen = {
     "button1" : Button(Vector2(0, 0) + drawArea, textToCell("Hello\nWorld!", fg=defaultColorFront, bg=defualtColorBack), clickable=True), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable=True),
     "button2" : Button(Vector2(0, firmsArea.y//firms * 1) + drawArea, textToCell("A clickable\nbutton")), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms))),
     "button3" : Button(Vector2(0, firmsArea.y//firms * 2) + drawArea, textToCell("A third\nclickable button"), clickable=True), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable = True),
-    "newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
+    #"newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
 }
 
 
@@ -117,14 +117,14 @@ extra = Text(Vector2(96, 0), textToCell(("|" + "\n")*19 + "|", fg=Vector([100, 1
 
 nodes = companies["Biltema"].getNodes()
 
-text5 = Text(Vector2(0, 0), textToCell("nodesList is " + str([round(num) for num in nodes[0]])))
+#text5 = Text(Vector2(0, 0), textToCell("nodesList is " + str([round(num) for num in nodes[0]])))
 
 stocks = []
 
-text4 = Text(Vector2(18, 20 - 15), textToCell("\n".join([str(i) for i in range(15, -1, -1)]), fg = Vector([20, 255, 40])))
+text4 = Text(Vector2(18, 20 - 20), textToCell("\n".join([str(i) for i in range(20, -1, -1)]), 2))
 
 for i in range(0, len(nodes[0])-2, 3):
-    stocks.append(chartBar(Vector2(20 + 2*i//3, 20), Vector(nodes[0][i:i+4])))
+    stocks.append(chartBar(Vector2(22 + 2*i//3, 20), Vector(nodes[0][i:i+4])))
 
 
 lastMouse = Vector2(0, 0)
@@ -177,12 +177,12 @@ else:
                 screenBuffer = item.render(term, screenBuffer)
 
 
-            text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
-            screenBuffer = text1.render(term, screenBuffer)
+            #text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
+            #screenBuffer = text1.render(term, screenBuffer)
 
             screenBuffer = text4.render(term, screenBuffer)
             screenBuffer = extra.render(term, screenBuffer)
-            screenBuffer = text5.render(term, screenBuffer)
+            #screenBuffer = text5.render(term, screenBuffer)
 
             for stock in stocks:
                 screenBuffer = stock.render(term, screenBuffer)

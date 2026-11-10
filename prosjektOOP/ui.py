@@ -2,6 +2,8 @@ from blessed import Terminal
 import math
 import re
 
+underscore = "U+0332"
+
 BOX_OUTER = {
     'tl': '▛',  # \u259B Upper Left Quadrant Block
     'tr': '▜',  # \u259C Upper Right Quadrant Block

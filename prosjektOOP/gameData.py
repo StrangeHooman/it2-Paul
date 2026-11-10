@@ -78,9 +78,12 @@ class Newspaper(TextBlocks):
 def noiseCalc(amplitude, amount, bias = 0):
     return [(round(amplitude*bias) + random.randint(-amplitude, amplitude)) for i in range(amount)]
 
+# Distance is needed change to get to target. Value 2 target 1 has a distance of -2 because you must divide by 2.
+def noiseCalc(amplitude, amount, distance, centering = 1, bias = 0):
+    return [round(lerp(centering, percentage(sign(random.uniform(-1, 1) + bias) * random.uniform(1, amplitude)), distance)) for i in range(amount)]
 
 companies = {
-    "Biltema": Company("Biltema", noiseCalc, (0, 1), (8, 4, 1), (1, 46)),
+    "Biltema": Company("Biltema", noiseCalc, (0, 1), (8, 5, 1), (3, 46*3, 1)),
     "Jasper CO" : Company("Jasper CO", noiseCalc, (0, 1), (0, 1), (2, 3))
 }
 
