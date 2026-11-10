@@ -267,7 +267,7 @@ class UI:
     colorBackOffset = Vector([0, 0, 0])
     
 
-    def __init__(self, pos: Vector2, size: Vector2, displayList: list, colorFront, colorBack):
+    def __init__(self, pos: Vector2, size: Vector2, displayList: list, colorFront = Vector([212, 212, 212]), colorBack = Vector([30, 30, 30])):
         self.pos = pos
         self.size = size
         self.displayList = displayList
@@ -344,6 +344,37 @@ class Text(UI):
     def setText(self, text: list):
         super().size = Vector2(len(text[0]), len(text))
         super().displayList = text
+
+class chartBar(UI):
+    def __init__(self, chartBottom: Vector2, info: Vector, red = Vector([255, 20, 20]), green = Vector([20, 255, 40]), *, bodyLeft = BLOCK_STEPS_R[6], bodyRight = BLOCK_STEPS_L[6], wickLeft = BLOCK_STEPS_R[1], wickRight = BLOCK_STEPS_L[1]):
+        openVal = info.values[0]
+        closeVal = info.values[-1]
+
+        maxEnd = openVal if openVal >= closeVal else closeVal
+        minEnd = openVal if openVal < closeVal else closeVal
+        
+        maxVal = info.values[0]
+        minVal = info.values[0]
+
+        for val in info.values:
+            if val > maxVal:
+                maxVal = val
+
+            if val < minVal:
+                minVal = val
+
+        color = green if openVal <= closeVal else red
+        final = []
+
+        for i in range(round(maxVal), round(minVal), -1):
+
+            if i <= round(maxEnd)and i > round(minEnd):
+                final.append(textToCell(bodyLeft + bodyRight, fg=color)[0])
+            else:
+                final.append(textToCell(wickLeft + wickRight, fg=color)[0])
+
+        super().__init__(Vector2(chartBottom.x, chartBottom.y - round(maxVal) + 1), Vector2(2, round(maxVal-minVal)), final, color)
+
 
 defaultColorFront = Vector([212, 212, 212])
 defualtColorBack = Vector([30, 30, 30])

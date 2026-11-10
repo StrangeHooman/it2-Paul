@@ -1,5 +1,7 @@
 from blessed import Terminal
-from ui import *
+from ui         import *
+from gameData   import *
+from tools      import *
 import time as timeLib
 import math
 import re
@@ -26,11 +28,7 @@ class Time:
         self.lastTime = currentTime
     
 
-def lerp(val, max, min):
-    return (max-min)*val + min
 
-def inverseLerp(val, min, max):
-    return (val-min)/(max-min)
 
 def clearBuffer(term: Terminal):
     global defaultCell
@@ -110,12 +108,24 @@ tradingScreen = {
     "newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
 }
 
-text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
 
 
-text4 = Text(Vector2(94, 5), textToCell((BLOCK_STEPS_R[1] + BLOCK_STEPS_L[1] + "\n")*2 + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6] + ("\n" + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6])*2, fg = Vector([20, 255, 40])))
+
 extra = Text(Vector2(96, 0), textToCell(("|" + "\n")*19 + "|", fg=Vector([100, 100, 100])))
-text5 = Text(Vector2(97, 6), textToCell((BLOCK_STEPS_R[1] + BLOCK_STEPS_L[1] + "\n")*2 + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6] + ("\n" + BLOCK_STEPS_R[6] + BLOCK_STEPS_L[6])*2, fg = Vector([255, 20, 20])))
+
+
+
+nodes = companies["Biltema"].getNodes()
+
+text5 = Text(Vector2(0, 0), textToCell("nodesList is " + str([round(num) for num in nodes[0]])))
+
+stocks = []
+
+text4 = Text(Vector2(18, 20 - 15), textToCell("\n".join([str(i) for i in range(15, -1, -1)]), fg = Vector([20, 255, 40])))
+
+for i in range(0, len(nodes[0])-2, 3):
+    stocks.append(chartBar(Vector2(20 + 2*i//3, 20), Vector(nodes[0][i:i+4])))
+
 
 lastMouse = Vector2(0, 0)
 
@@ -166,11 +176,16 @@ else:
             for item in tradingScreen.values():
                 screenBuffer = item.render(term, screenBuffer)
 
+
+            text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
             screenBuffer = text1.render(term, screenBuffer)
 
             screenBuffer = text4.render(term, screenBuffer)
             screenBuffer = extra.render(term, screenBuffer)
             screenBuffer = text5.render(term, screenBuffer)
+
+            for stock in stocks:
+                screenBuffer = stock.render(term, screenBuffer)
 
             renderScreen(term, screenBuffer)
 
