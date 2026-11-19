@@ -82,7 +82,7 @@ def calcStocks(startPos, endPos, nodesPerStock, currentNode):
 
         currentNode = min(currentNode, len(nodes[0])-8)
 
-        space = clamp(math.floor((endPos.x - startPos.x)/2) + 1, 0, math.ceil((len(nodes[0][0:currentNode])-1)/nodesPerStock)) 
+
 
 
         realStart = endPos.x - math.floor((len(nodes[0][0:currentNode])-1)/nodesPerStock * 2)
@@ -90,6 +90,8 @@ def calcStocks(startPos, endPos, nodesPerStock, currentNode):
 
         for i in range(0, currentNode, 9):
             stocks.append(chartBar(Vector2(realStart + 2*i//9, 40), Vector(nodes[0][i:i+10])))
+
+        space = clamp(math.floor((endPos.x - startPos.x)/2) + 1, 0, len(stocks)) 
 
         companyStocks.append(stocks[-space:])
 
@@ -166,7 +168,8 @@ framecount = 0
 time = Time()
 
 selectedCompany = 0
-cash = 0
+cash = 100
+currentNode = 0
 
 testText = Text(Vector2(0, 0), textToCell(" "))
 
@@ -186,7 +189,7 @@ else:
 
             screenBuffer = clearBuffer(term)
 
-            companyStocks = calcStocks(Vector2(22, 0), Vector2(110, 25), 9, round(cash*200))   
+            companyStocks = calcStocks(Vector2(22, 0), Vector2(90, 25), 9, round(currentNode))   
 
             if event.lower() == "q":
                 break
@@ -213,9 +216,9 @@ else:
                 if type(item) == Button:
                     selectedCompany = item.clicked(lastMouse, clicking) if item.clicked(lastMouse, clicking) != None else selectedCompany
 
-            for item in utilButtons.values():
-                if type(item) == Button:
-                    item.clicked(lastMouse, False)
+            price = list(companies.values())[selectedCompany].nodes[0][min(round(currentNode), len(list(companies.values())[selectedCompany].nodes[0])-1)]
+            cash = notNone(utilButtons["BUY"].clicked(lastMouse, clicking, list(companies.values())[selectedCompany].changeShare, (price, cash, 1)), cash)
+            cash = notNone(utilButtons["SELL"].clicked(lastMouse, clicking, list(companies.values())[selectedCompany].changeShare, (price, cash, -1)), cash)
 
 
             for item in tradingScreen.values():
@@ -242,7 +245,7 @@ else:
             renderScreen(term, screenBuffer)
 
             framecount += 1
-            cash += 1 * time.deltaTime
+            currentNode += 3 * time.deltaTime
 
 
 print(term.move_xy(0, drawArea.y+8) + "Hello")

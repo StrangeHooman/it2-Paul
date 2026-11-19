@@ -27,3 +27,10 @@ def distToPercent(x, y):
 
     else:
         return -(x/y)
+
+def notNone(val, origin):
+    if val != None:
+        return val
+
+    else:
+        return origin

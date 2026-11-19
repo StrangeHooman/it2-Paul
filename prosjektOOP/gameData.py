@@ -23,9 +23,9 @@ class Company:
 
     def changeShare(self, price, money, amnt):
         if amnt > 0:
-            if money >= (price * amnt + 2):
+            if money >= (price * amnt + 1):
                 self.shares += amnt
-                money -= price * amnt + 2
+                money -= price * amnt + 1
 
         else:
             if -amnt <= self.shares:
