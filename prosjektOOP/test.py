@@ -70,6 +70,26 @@ def renderScreen(term: Terminal, buffer):
     print(term.move_xy(0, 0) + outString, end="", flush=True)
 
 
+def calcStocks(startPos, endPos, nodesPerStock):
+    space = (endPos.x - startPos.x) * nodesPerStock
+    
+    companyStocks = []
+
+    for company in companies.values():
+        nodes = company.nodes
+        stocks = []
+
+        realStart = startPos.x - math.floor((len(nodes)-1)/nodesPerStock)
+
+
+        for i in range(0, len(nodes[0])-8, 9):
+            stocks.append(chartBar(Vector2(realStart + 2*i//9, 40), Vector(nodes[0][i:i+10])))
+        stocks.append(Text(Vector2(stocks[-1].pos.x+2, 0), textToCell(("|" + "\n")*24 + "|", fg=Vector([100, 100, 100]))))
+
+        companyStocks.append(stocks[-space:-1])
+
+    return companyStocks
+
 
 term = Terminal()
 
@@ -102,26 +122,9 @@ print(term.move_xy(drawArea.x, drawArea.y) + term.width*BOX_LIGHT["h"])
 
 
 
-
-
-
-
-
 #text5 = Text(Vector2(0, 0), textToCell("nodesList is " + str([round(num) for num in nodes[0]])))
 
-companyStocks = []
-
-
-
-for company in companies.values():
-    nodes = company.nodes
-    stocks = []
-    stocks.append(Text(Vector2(19, 30 - 30), textToCell("\n".join([str(i+15) for i in range(25, 0, -1)]), 2)))
-    for i in range(0, len(nodes[0])-8, 9):
-        stocks.append(chartBar(Vector2(22 + 2*i//9, 40), Vector(nodes[0][i:i+10])))
-    stocks.append(Text(Vector2(stocks[-1].pos.x+2, 0), textToCell(("|" + "\n")*24 + "|", fg=Vector([100, 100, 100]))))
-    stocks.append(Text(Vector2(19, 25), textToCell(BOX_OUTER["t"]*(term.width - 19))))
-    companyStocks.append(stocks)
+companyStocks = calcStocks(Vector2(22, 0), Vector2(100, 25), 9)
 
 green = defaultGreen
 red = defaultRed
@@ -131,6 +134,11 @@ utilButtons = {
     "BUY" : Button(Vector2(19, 26), textToCell(" \033[1mBUY\033[0m ", bg=green, fg=text), colorBack=green, colorFront=text, clickable=True),
     "SELL" : Button(Vector2(30, 26), textToCell(" \033[1mSELL\033[0m ", bg=red, fg=text), colorBack=red, colorFront=text, clickable=True),
 }
+
+ui = [
+    Text(Vector2(19, 30 - 30), textToCell("\n".join([str(i+15) for i in range(25, 0, -1)]), 2)),
+    Text(Vector2(19, 25), textToCell(BOX_OUTER["t"]*(term.width - 19)))
+]
 
 firmsArea = Vector2(int(math.floor(term.width * 0.2)), int(math.floor(term.height*0.5)))
 
@@ -172,6 +180,8 @@ else:
             event = term.inkey(timeout=1/120)
 
             screenBuffer = clearBuffer(term)
+
+            companyStocks = calcStocks(Vector2(22, 0), Vector2(50 + round(cash), 25), 9)   
 
             if event.lower() == "q":
                 break
@@ -220,6 +230,9 @@ else:
                 screenBuffer = stock.render(term, screenBuffer)
 
             #screenBuffer = testText.render(term, screenBuffer)
+
+            for item in ui:
+                screenBuffer = item.render(term, screenBuffer)
 
             renderScreen(term, screenBuffer)
 
