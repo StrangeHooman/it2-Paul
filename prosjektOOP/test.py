@@ -70,8 +70,8 @@ def renderScreen(term: Terminal, buffer):
     print(term.move_xy(0, 0) + outString, end="", flush=True)
 
 
-def calcStocks(startPos, endPos, nodesPerStock):
-    space = (endPos.x - startPos.x) * nodesPerStock
+def calcStocks(startPos, endPos, nodesPerStock, currentNode):
+
     
     companyStocks = []
 
@@ -79,14 +79,19 @@ def calcStocks(startPos, endPos, nodesPerStock):
         nodes = company.nodes
         stocks = []
 
-        realStart = startPos.x - math.floor((len(nodes)-1)/nodesPerStock)
+
+        currentNode = min(currentNode, len(nodes[0])-8)
+
+        space = clamp(math.floor((endPos.x - startPos.x)/2) + 1, 0, math.ceil((len(nodes[0][0:currentNode])-1)/nodesPerStock)) 
 
 
-        for i in range(0, len(nodes[0])-8, 9):
+        realStart = endPos.x - math.floor((len(nodes[0][0:currentNode])-1)/nodesPerStock * 2)
+
+
+        for i in range(0, currentNode, 9):
             stocks.append(chartBar(Vector2(realStart + 2*i//9, 40), Vector(nodes[0][i:i+10])))
-        stocks.append(Text(Vector2(stocks[-1].pos.x+2, 0), textToCell(("|" + "\n")*24 + "|", fg=Vector([100, 100, 100]))))
 
-        companyStocks.append(stocks[-space:-1])
+        companyStocks.append(stocks[-space:])
 
     return companyStocks
 
@@ -124,7 +129,7 @@ print(term.move_xy(drawArea.x, drawArea.y) + term.width*BOX_LIGHT["h"])
 
 #text5 = Text(Vector2(0, 0), textToCell("nodesList is " + str([round(num) for num in nodes[0]])))
 
-companyStocks = calcStocks(Vector2(22, 0), Vector2(100, 25), 9)
+companyStocks = calcStocks(Vector2(22, 0), Vector2(100, 25), 9, 45*9+1)
 
 green = defaultGreen
 red = defaultRed
@@ -181,7 +186,7 @@ else:
 
             screenBuffer = clearBuffer(term)
 
-            companyStocks = calcStocks(Vector2(22, 0), Vector2(50 + round(cash), 25), 9)   
+            companyStocks = calcStocks(Vector2(22, 0), Vector2(110, 25), 9, round(cash*200))   
 
             if event.lower() == "q":
                 break

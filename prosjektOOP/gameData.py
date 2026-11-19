@@ -67,10 +67,13 @@ class Company:
                 randomAddition = 0
 
                 if j == len(daily) - 1:
+                    randomAddition = self.nodeParams[0] + 1
+
+                elif j == len(daily) - 2:
                     randomAddition = self.nodeParams[0]
 
                 else:
-                    randomAddition = round((j+1) * ((self.nodeParams[0]-1)/(self.dailyParams[0]-1))) + random.randint(-self.randomDiff, self.randomDiff)                
+                    randomAddition = round((j+1) * ((self.nodeParams[0])/(self.dailyParams[0]-1))) + random.randint(-self.randomDiff, self.randomDiff)                
 
 
                 for k in range(lastPos, randomAddition):
