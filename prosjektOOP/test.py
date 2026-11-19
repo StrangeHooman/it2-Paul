@@ -47,7 +47,7 @@ def renderScreen(term: Terminal, buffer):
 
     for row, string in enumerate(buffer):
         for col, cell in enumerate(string):
-            currentColor = term.color_rgb(*cell.fg.values) + term.on_color_rgb(*cell.bg.values)
+            currentColor = term.color_rgb(*[clamp(round(val), 0, 255) for val in cell.fg.values]) + term.on_color_rgb(*[clamp(round(val), 0, 255) for val in cell.bg.values])
             currentStyles = cell.styles
             
             if lastColor != currentColor:
@@ -73,7 +73,7 @@ def renderScreen(term: Terminal, buffer):
 
 term = Terminal()
 
-print(term.color_rgb(*defaultColorFront.values) + term.on_color_rgb(*defualtColorBack.values))
+print(term.color_rgb(*defaultColorFront.values) + term.on_color_rgb(*defaultColorBack.values))
 
 
 screenBuffer = []
@@ -97,35 +97,51 @@ newspaperSize = Vector2(40, 30)
 
 print(term.move_xy(drawArea.x, drawArea.y) + term.width*BOX_LIGHT["h"])
 
-firmsArea = Vector2(int(math.floor(term.width * 0.2)), int(math.floor(term.height*0.5)))
-
-firms = 3
-
-tradingScreen = {
-    "button1" : Button(Vector2(0, 0) + drawArea, textToCell("Hello\nWorld!", fg=defaultColorFront, bg=defualtColorBack), clickable=True), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable=True),
-    "button2" : Button(Vector2(0, firmsArea.y//firms * 1) + drawArea, textToCell("A clickable\nbutton")), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms))),
-    "button3" : Button(Vector2(0, firmsArea.y//firms * 2) + drawArea, textToCell("A third\nclickable button"), clickable=True), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable = True),
-    #"newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
-}
 
 
 
 
-extra = Text(Vector2(96, 0), textToCell(("|" + "\n")*19 + "|", fg=Vector([100, 100, 100])))
 
 
 
-nodes = companies["Biltema"].getNodes()
+
+
 
 #text5 = Text(Vector2(0, 0), textToCell("nodesList is " + str([round(num) for num in nodes[0]])))
 
-stocks = []
+companyStocks = []
 
-text4 = Text(Vector2(18, 20 - 20), textToCell("\n".join([str(i) for i in range(20, -1, -1)]), 2))
 
-for i in range(0, len(nodes[0])-2, 3):
-    stocks.append(chartBar(Vector2(22 + 2*i//3, 20), Vector(nodes[0][i:i+4])))
 
+for company in companies.values():
+    nodes = company.nodes
+    stocks = []
+    stocks.append(Text(Vector2(19, 30 - 30), textToCell("\n".join([str(i+15) for i in range(25, 0, -1)]), 2)))
+    for i in range(0, len(nodes[0])-8, 9):
+        stocks.append(chartBar(Vector2(22 + 2*i//9, 40), Vector(nodes[0][i:i+10])))
+    stocks.append(Text(Vector2(stocks[-1].pos.x+2, 0), textToCell(("|" + "\n")*24 + "|", fg=Vector([100, 100, 100]))))
+    stocks.append(Text(Vector2(19, 25), textToCell(BOX_OUTER["t"]*(term.width - 19))))
+    companyStocks.append(stocks)
+
+green = defaultGreen
+red = defaultRed
+text = Vector([0, 0, 0])
+
+utilButtons = {
+    "BUY" : Button(Vector2(19, 26), textToCell(" \033[1mBUY\033[0m ", bg=green, fg=text), colorBack=green, colorFront=text, clickable=True),
+    "SELL" : Button(Vector2(30, 26), textToCell(" \033[1mSELL\033[0m ", bg=red, fg=text), colorBack=red, colorFront=text, clickable=True),
+}
+
+firmsArea = Vector2(int(math.floor(term.width * 0.2)), int(math.floor(term.height*0.5)))
+
+firms = len(companies)
+
+tradingScreen = {
+    "button1" : Button(Vector2(0, 0) + drawArea, textToCell(list(companies.values())[0].name, 1), clickable=True, function = returnNum, funcArgs = (0,)), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable=True),
+    "button2" : Button(Vector2(0, firmsArea.y//firms * 1) + drawArea, textToCell(list(companies.values())[1].name, 1), clickable=True, function = returnNum, funcArgs = (1,)), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms))),
+    "button3" : Button(Vector2(0, firmsArea.y//firms * 2) + drawArea, textToCell(list(companies.values())[2].name, 1), clickable=True, function = returnNum, funcArgs = (2,)), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable = True),
+    #"newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
+}
 
 lastMouse = Vector2(0, 0)
 
@@ -136,6 +152,10 @@ framecount = 0
 
 time = Time()
 
+selectedCompany = 0
+cash = 0
+
+testText = Text(Vector2(0, 0), textToCell(" "))
 
 renderScreen(term, screenBuffer)
 
@@ -145,10 +165,9 @@ else:
     with term.cbreak(), term.hidden_cursor(), term.mouse_enabled(report_motion=True):
         while True:
 
-
             time.updateTime()
-            
 
+            clicking = False
             
             event = term.inkey(timeout=1/120)
 
@@ -157,11 +176,17 @@ else:
             if event.lower() == "q":
                 break
 
+
+
             if event.name and event.name.startswith("MOUSE_"):
                 x, y = event.mouse_xy
                 lastMouse = Vector2(x, y)
 
 
+                if event.name == "MOUSE_LEFT":
+                    clicking = True
+
+                testText = Text(Vector2(0, 0), textToCell(event.name))
 
                 #print(term.move_xy(0, drawArea.y + 15) + term.clear_eol + f"{event.name} at x={x}, y={y}", end="", flush=True)
 
@@ -171,25 +196,35 @@ else:
 
             for item in tradingScreen.values():
                 if type(item) == Button:
-                    item.clicked(lastMouse)
+                    selectedCompany = item.clicked(lastMouse, clicking) if item.clicked(lastMouse, clicking) != None else selectedCompany
+
+            for item in utilButtons.values():
+                if type(item) == Button:
+                    item.clicked(lastMouse, False)
+
 
             for item in tradingScreen.values():
                 screenBuffer = item.render(term, screenBuffer)
 
+            for item in utilButtons.values():
+                screenBuffer = item.render(term, screenBuffer)
+
 
             #text1 = Text(Vector2(50, 20), textToCell("Something happening\n\033[1mThis \033[0mis very interresting\n\nBtw, the height of the terminal is \033[31m" + str(term.height) + "\n\033[0mand the width is \033[32m" + str(term.width)))
-            #screenBuffer = text1.render(term, screenBuffer)
 
-            screenBuffer = text4.render(term, screenBuffer)
-            screenBuffer = extra.render(term, screenBuffer)
-            #screenBuffer = text5.render(term, screenBuffer)
+            cashText = Text(Vector2(45, 27), textToCell(str(round(cash)) + "$"))
 
-            for stock in stocks:
+            screenBuffer = cashText.render(term, screenBuffer)
+
+            for stock in companyStocks[selectedCompany]:
                 screenBuffer = stock.render(term, screenBuffer)
+
+            #screenBuffer = testText.render(term, screenBuffer)
 
             renderScreen(term, screenBuffer)
 
             framecount += 1
+            cash += 1 * time.deltaTime
 
 
 print(term.move_xy(0, drawArea.y+8) + "Hello")

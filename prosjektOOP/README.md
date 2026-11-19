@@ -2,13 +2,9 @@
 
 Aksjespill som renderer grafer i terminalen.
 
-Game-ifiserte elementer
-
 Gameloop som er seperat fra input
 
 Du skal kunne klikke på menyer med musen
-
-15 tidsintervaller per dag
 
 <br>
 

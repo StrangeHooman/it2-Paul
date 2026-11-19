@@ -66,6 +66,12 @@ SHADES = {
     "dark": "▓",    # 75% opacity
 }
 
+# Some basic functions for buttons
+def returnNum(x):
+    return x
+
+
+
 class Vector2:
     def __init__(self, x, y):
         self.x = x
@@ -176,7 +182,7 @@ class Vector():
 
     def __mul__(self, other):
 
-        finalVec = [0 for i in range(len(self.values))]
+        finalVec = self.values
         
         if type(other) == int or type(other) == float:
             finalVec = [self.values[i] * other for i in range(len(self.values))]
@@ -228,8 +234,8 @@ def textToCell(string: str, horizontalLayout = 0, *, fg = Vector([212, 212, 212]
         lastPos = 0
 
 
-        leftBuffer = [emptyCell for i in range(math.floor((maxLen - len(re.sub(sgr, "", line)))/2 *horizontalLayout))]
-        rightBuffer = [emptyCell for i in range(math.ceil((maxLen - len(re.sub(sgr, "", line)))/2 *(2-horizontalLayout)))]
+        leftBuffer = [emptyCell for i in range(math.floor(((maxLen - len(re.sub(sgr, "", line)))/2) *(horizontalLayout)))]
+        rightBuffer = [emptyCell for i in range(math.ceil(((maxLen - len(re.sub(sgr, "", line)))/2) *(2-horizontalLayout)))]
 
         for match in sgr.finditer(line):
             text = line[lastPos:match.start()]
@@ -259,6 +265,20 @@ def textToCell(string: str, horizontalLayout = 0, *, fg = Vector([212, 212, 212]
     return finalBuffer
 
 
+
+
+
+
+defaultRed = Vector([250, 68, 66])# - Vector([100, 20, 20])
+defaultGreen = Vector([20, 200, 100])# - Vector([5, 150, 25])
+defaultColorFront = Vector([212, 212, 212])
+defaultColorBack = Vector([30, 30, 30])
+defaultCell = Cell(" ", defaultColorFront, defaultColorBack, [])
+
+
+
+
+
 class UI:
     displayList: list
     pos = Vector2(0, 0)
@@ -267,6 +287,7 @@ class UI:
     colorFrontOffset = Vector([0, 0, 0])
     colorBack = Vector([30, 30, 30])
     colorBackOffset = Vector([0, 0, 0])
+    activeOffset = 0
     
 
     def __init__(self, pos: Vector2, size: Vector2, displayList: list, colorFront = Vector([212, 212, 212]), colorBack = Vector([30, 30, 30])):
@@ -281,8 +302,8 @@ class UI:
         for row, string in enumerate(self.displayList):
             for i, cell in enumerate(string):
                 try:
-                    foreGround = (cell.fg + self.colorFrontOffset)
-                    backGround = (cell.bg + self.colorBackOffset)
+                    foreGround = (cell.fg + self.colorFrontOffset * cell.fg)
+                    backGround = (cell.bg + self.colorBackOffset * cell.bg)
 
                     buffer[row+self.pos.y][i+self.pos.x] = Cell(cell.char, foreGround, backGround, cell.styles)
 
@@ -294,7 +315,7 @@ class UI:
         return buffer
 
 class Button(UI):
-    def __init__(self, pos: Vector2, text: list, size = Vector2(0, 0), *, clickable = False, colorFront = Vector([212, 212, 212]), colorBack = Vector([30, 30, 30])):
+    def __init__(self, pos: Vector2, text: list, size = Vector2(0, 0), *, clickable = False, function = None, funcArgs = None, colorFront = Vector([212, 212, 212]), colorBack = Vector([30, 30, 30])):
         
 
         maxLen = max(len(text[0]), size.x - 2)
@@ -317,6 +338,8 @@ class Button(UI):
         display.append(textToCell(BOX_LIGHT["bl"] + BOX_LIGHT["h"]*maxLen + BOX_LIGHT["br"], fg = (colorFront), bg = (colorBack))[0])
 
         self.clickable = clickable
+        self.function = function
+        self.funcArgs = funcArgs
 
         super().__init__(pos, Vector2(2+maxLen, len(display)), display, colorFront, colorBack)
 
@@ -324,16 +347,26 @@ class Button(UI):
 
 
     def clicked(self, mousepos: Vector2, clicked = False, function = None, funcArgs: tuple = None):
+        if function == None:
+            function = self.function
+
+        if funcArgs == None:
+            funcArgs = self.funcArgs
+        
         inside =  True if (mousepos >= self.pos) and (mousepos < (self.size + self.pos)) else False
 
         if inside and self.clickable:
-            self.colorBackOffset = self.colorBack * 1
+            self.colorBackOffset = Vector([0.35, 0.35, 0.35])
 
             if clicked:
-                function(*funcArgs)
+                self.colorBackOffset = Vector([1, 1, 1])
+
+                return function(*funcArgs)
 
         else:
-            self.colorBackOffset = self.colorBack * 0
+            self.colorBackOffset = Vector([0, 0, 0])
+
+        return None
 
 
 
@@ -348,7 +381,7 @@ class Text(UI):
         super().displayList = text
 
 class chartBar(UI):
-    def __init__(self, chartBottom: Vector2, info: Vector, red = Vector([255, 20, 20]), green = Vector([20, 255, 40]), *, bodyLeft = BLOCK_STEPS_R[6], bodyRight = BLOCK_STEPS_L[6], wickLeft = BLOCK_STEPS_R[1], wickRight = BLOCK_STEPS_L[1]):
+    def __init__(self, chartBottom: Vector2, info: Vector, red = defaultRed, green = defaultGreen, *, bodyLeft = BLOCK_STEPS_R[5], bodyRight = BLOCK_STEPS_L[5], wickLeft = BLOCK_STEPS_R[1], wickRight = BLOCK_STEPS_L[1]):
         openVal = info.values[0]
         closeVal = info.values[-1]
 
@@ -376,8 +409,3 @@ class chartBar(UI):
                 final.append(textToCell(wickLeft + wickRight, fg=color)[0])
 
         super().__init__(Vector2(chartBottom.x, chartBottom.y - round(maxVal) + 1), Vector2(2, round(maxVal-minVal)), final, color)
-
-
-defaultColorFront = Vector([212, 212, 212])
-defualtColorBack = Vector([30, 30, 30])
-defaultCell = Cell(" ", defaultColorFront, defualtColorBack, [])
