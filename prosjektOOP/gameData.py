@@ -157,7 +157,7 @@ def noiseCalc(current: float, target: float, min, max, minAmp, maxAmp, bias = 0,
 
 companies = {
     "Biltema": Company(" Biltema ", noiseCalc, 15, 10, (1, 16, 40, 0, 10, 0, 0.1, 0.1), (6, 21, 35, 0, 10, 0, 0.25, 0.5), (45*3*3+1, 16, 40, 0, 3, 0, 0.4, 0.1)),           # Gjør det mulig å bestemme egen modell for hver noise
-    "Jasper CO" : Company(" Jasper \n & CO ", noiseCalc, 15, 10, (1, 16, 40, 5, 15, 0, 0.1, 0.25), (6, 18, 38, 5, 20, 0, 0.25, 0.5), (45*3*3+1, 16, 40, 1, 5, 0, 0.4, 0.25)),
+    "Jasper & CO" : Company(" Jasper \n & CO ", noiseCalc, 15, 10, (1, 16, 40, 5, 15, 0, 0.1, 0.25), (6, 18, 38, 5, 20, 0, 0.25, 0.5), (45*3*3+1, 16, 40, 1, 5, 0, 0.4, 0.25)),
     "Lethal company" : Company(" Lethal \n company ", noiseCalc, 0, 6, (1, 16, 40, 0, 5, 1, 0.1, 0.1), (9, 16, 40, 10, 20, -0.65, 0, 0.1), (45*3*3+1, 16, 40, 0, 5, 0, 0.5, 0.25))
 }
 

@@ -85,7 +85,7 @@ def calcStocks(startPos, endPos, nodesPerStock, currentNode):
 
 
 
-        realStart = endPos.x - math.floor((len(nodes[0][0:currentNode])-1)/nodesPerStock * 2)
+        realStart = endPos.x - (math.floor((len(nodes[0][0:currentNode])-1)/nodesPerStock * 2) - math.floor((len(nodes[0][0:currentNode])-1)/nodesPerStock * 2)%2)
 
 
         for i in range(0, currentNode, 9):
@@ -144,7 +144,8 @@ utilButtons = {
 
 ui = [
     Text(Vector2(19, 30 - 30), textToCell("\n".join([str(i+15) for i in range(25, 0, -1)]), 2)),
-    Text(Vector2(19, 25), textToCell(BOX_OUTER["t"]*(term.width - 19)))
+    Text(Vector2(19, 25), textToCell(BOX_OUTER["t"]*(term.width - 19))),
+    Text(Vector2(92, 0), textToCell("|\n"*24+"|", fg=defaultColorFront*0.5))
 ]
 
 firmsArea = Vector2(int(math.floor(term.width * 0.2)), int(math.floor(term.height*0.5)))
@@ -155,6 +156,9 @@ tradingScreen = {
     "button1" : Button(Vector2(0, 0) + drawArea, textToCell(list(companies.values())[0].name, 1), clickable=True, function = returnNum, funcArgs = (0,)), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable=True),
     "button2" : Button(Vector2(0, firmsArea.y//firms * 1) + drawArea, textToCell(list(companies.values())[1].name, 1), clickable=True, function = returnNum, funcArgs = (1,)), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms))),
     "button3" : Button(Vector2(0, firmsArea.y//firms * 2) + drawArea, textToCell(list(companies.values())[2].name, 1), clickable=True, function = returnNum, funcArgs = (2,)), #Vector2(firmsArea.x, math.floor(firmsArea.y/firms)), clickable = True),
+    "Biltema" : Text(Vector2(12, 1), textToCell(" ")),
+    "Jasper & CO" : Text(Vector2(12, firmsArea.y//firms * 1 + 1), textToCell(" ")),
+    "Lethal company" : Text(Vector2(12, firmsArea.y//firms * 2 + 1), textToCell(" "))        
     #"newspaper" : Button(newspaperPos, textToCell("\033[1mTODAYS NEWS:\033[0m\n\nA woman has fallen down\na stair. Oh no!\n" + "-"*(newspaperSize.x-2) + "\nI shit my pants.\nThis WILL affect the market.", 0, bg = Vector([239, 230, 210]), fg=Vector([28, 26, 23])), colorBack = Vector([239, 230, 210]), colorFront=Vector([28, 26, 23]), clickable=True) #newspaperSize,
 }
 
@@ -212,9 +216,13 @@ else:
                 # button1.pos = lastMouse + drawArea
 
 
-            for item in tradingScreen.values():
+            for key in tradingScreen.keys():
+                item = tradingScreen[key]
                 if type(item) == Button:
                     selectedCompany = item.clicked(lastMouse, clicking) if item.clicked(lastMouse, clicking) != None else selectedCompany
+
+                else:
+                    tradingScreen[key].setText(textToCell(str(companies[key].shares)))
 
             price = list(companies.values())[selectedCompany].nodes[0][min(round(currentNode), len(list(companies.values())[selectedCompany].nodes[0])-1)]
             cash = notNone(utilButtons["BUY"].clicked(lastMouse, clicking, list(companies.values())[selectedCompany].changeShare, (price, cash, 1)), cash)

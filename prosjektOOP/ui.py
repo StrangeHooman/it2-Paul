@@ -377,8 +377,10 @@ class Text(UI):
         super().__init__(pos, Vector2(maxLen, len(text)), text, Vector([100, 100, 100]), Vector([100, 100, 100]))
 
     def setText(self, text: list):
-        super().size = Vector2(len(text[0]), len(text))
-        super().displayList = text
+        self.size = Vector2(len(text[0]), len(text))
+        self.displayList = text
+
+
 
 class chartBar(UI):
     def __init__(self, chartBottom: Vector2, info: Vector, red = defaultRed, green = defaultGreen, *, bodyLeft = BLOCK_STEPS_R[5], bodyRight = BLOCK_STEPS_L[5], wickLeft = BLOCK_STEPS_R[1], wickRight = BLOCK_STEPS_L[1]):
