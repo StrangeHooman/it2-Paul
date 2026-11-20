@@ -163,4 +163,8 @@ companies = {
 
 
 articles = {Newspaper("""
-""", "", 0)}
+A new model of cars has
+shown an outstanding ability
+to transport people from
+A to B
+""", companies["Biltema"], 0)}

@@ -222,7 +222,7 @@ else:
                     selectedCompany = item.clicked(lastMouse, clicking) if item.clicked(lastMouse, clicking) != None else selectedCompany
 
                 else:
-                    tradingScreen[key].setText(textToCell(str(companies[key].shares)))
+                    tradingScreen[key].setText(textToCell(str(companies[key].shares) + "\nshares"))
 
             price = list(companies.values())[selectedCompany].nodes[0][min(round(currentNode), len(list(companies.values())[selectedCompany].nodes[0])-1)]
             cash = notNone(utilButtons["BUY"].clicked(lastMouse, clicking, list(companies.values())[selectedCompany].changeShare, (price, cash, 1)), cash)
