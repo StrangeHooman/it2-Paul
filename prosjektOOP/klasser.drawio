@@ -1,0 +1,81 @@
+<mxfile host="65bd71144e">
+    <diagram name="Class Overview" id="oop-overview">
+        <mxGraphModel dx="240" dy="250" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1000" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="kOKdI_0Ia8QXJJ4vKt6O-7" parent="1" style="rounded=1;whiteSpace=wrap;html=1;roundedPerimeter=1;dashed=1;dashPattern=8 8;" value="" vertex="1">
+                    <mxGeometry height="440" width="290" x="355" y="190" as="geometry"/>
+                </mxCell>
+                <mxCell id="title" parent="1" style="text;html=1;align=center;verticalAlign=middle;fontSize=24;fontStyle=1;" value="Objektorientert programmering - Klasseoversikt" vertex="1">
+                    <mxGeometry height="50" width="560" x="520" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="legend" parent="1" style="rounded=1;whiteSpace=wrap;html=1;fillColor=default;strokeColor=#666666;fontSize=11;align=left;spacing=10;fillStyle=auto;gradientColor=none;dashed=1;dashPattern=8 8;" value="&lt;font style=&quot;font-size: 16px;&quot;&gt;&lt;b&gt;Informasjon&lt;/b&gt;&lt;br&gt;Blå = spilldata&lt;br&gt;Grønn = UI/visning&lt;br&gt;Gul = hjelpetyper&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="130" width="200" x="20" y="20" as="geometry"/>
+                </mxCell>
+                <mxCell id="company" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Company&lt;/b&gt;&lt;hr&gt;name: str&lt;br&gt;model: function&lt;br&gt;nodes: list&lt;br&gt;shares: int&lt;div&gt;&lt;hr&gt;changeShare(price, money, amnt)&lt;/div&gt;&lt;div&gt;getNodes()&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="160" width="220" x="80" y="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="kOKdI_0Ia8QXJJ4vKt6O-14" edge="1" parent="1" source="textblocks" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;rounded=0;curved=0;endArrow=block;endFill=0;" target="newspaper">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="textblocks" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;TextBlocks&lt;/b&gt;&lt;hr&gt;text: str" vertex="1">
+                    <mxGeometry height="100" width="220" x="390" y="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="newspaper" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Newspaper&lt;/b&gt;&lt;hr&gt;firm: str&lt;br&gt;baseEffect: float" vertex="1">
+                    <mxGeometry height="110" width="220" x="390" y="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="time" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" value="&lt;b&gt;Time&lt;/b&gt;&lt;hr&gt;timeScale: float&lt;br&gt;gameTime: float&lt;br&gt;realTime: float&lt;br&gt;deltaTime: float&lt;div&gt;&lt;hr&gt;updateTime()&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="140" width="220" x="80" y="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="vector2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;Vector2&lt;/b&gt;&lt;hr&gt;x: float&lt;br&gt;y: float" vertex="1">
+                    <mxGeometry height="100" width="180" x="690" y="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="vector" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;Vector&lt;/b&gt;&lt;hr&gt;values: list" vertex="1">
+                    <mxGeometry height="90" width="180" x="690" y="410" as="geometry"/>
+                </mxCell>
+                <mxCell id="cell" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#fff2cc;strokeColor=#d6b656;" value="&lt;b&gt;Cell&lt;/b&gt;&lt;hr&gt;char: str&lt;br&gt;fg: Vector&lt;br&gt;bg: Vector&lt;br&gt;styles: list" vertex="1">
+                    <mxGeometry height="130" width="180" x="690" y="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="kOKdI_0Ia8QXJJ4vKt6O-4" edge="1" parent="1" source="ui" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;curved=0;strokeWidth=2;endArrow=block;endFill=0;" target="chartbar">
+                    <mxGeometry relative="1" x="-0.5951" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1250" y="490"/>
+                            <mxPoint x="1460" y="490"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="kOKdI_0Ia8QXJJ4vKt6O-5" edge="1" parent="1" source="ui" style="html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeWidth=2;strokeColor=default;rounded=0;endArrow=block;endFill=0;" target="button">
+                    <mxGeometry relative="1" x="0.1067" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1250" y="490"/>
+                            <mxPoint x="1040" y="490"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="kOKdI_0Ia8QXJJ4vKt6O-6" edge="1" parent="1" source="ui" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;rounded=0;curved=0;strokeWidth=2;endArrow=block;endFill=0;" target="text">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="1250" y="400"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="ui" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;UI&lt;/b&gt;&lt;hr&gt;pos: Vector2&lt;br&gt;size: Vector2&lt;br&gt;displayList: list&lt;br&gt;colors&lt;div&gt;&lt;hr&gt;render(terminal, buffer)&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="140" width="220" x="1140" y="220" as="geometry"/>
+                </mxCell>
+                <mxCell id="button" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;Button&lt;/b&gt;&lt;hr&gt;text: list&lt;br&gt;clickable: bool&lt;br&gt;function&lt;br&gt;funcArgs&lt;div&gt;&lt;hr&gt;clicked(mousepos)&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="130" width="180" x="950" y="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="text" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;Text&lt;/b&gt;&lt;hr&gt;displayList: list&lt;div&gt;&lt;hr&gt;setText(text)&lt;/div&gt;" vertex="1">
+                    <mxGeometry height="100" width="180" x="1160" y="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="chartbar" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" value="&lt;b&gt;chartBar&lt;/b&gt;&lt;hr&gt;chartBottom: Vector2&lt;br&gt;info: Vector&lt;br&gt;colors" vertex="1">
+                    <mxGeometry height="120" width="180" x="1370" y="560" as="geometry"/>
+                </mxCell>
+                <mxCell id="kOKdI_0Ia8QXJJ4vKt6O-13" parent="1" style="text;html=1;whiteSpace=wrap;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;rounded=0;" value="&lt;font style=&quot;font-size: 15px;&quot;&gt;Disse rakk jeg ikke å bruke i spillet&lt;/font&gt;" vertex="1">
+                    <mxGeometry height="36.25" width="145" x="427.5" y="560" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
